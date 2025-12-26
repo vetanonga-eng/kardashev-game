@@ -1,0 +1,8 @@
+{
+  "name": "Kardashev Scale Game",
+  "short_name": "Kardashev",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000"
+}
