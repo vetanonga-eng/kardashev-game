@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Kardashev Scale Game</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Kardashev Game">
+
+<style>
+body {
+    background:black;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+    margin-top:40px;
+}
+button {
+    padding:12px 22px;
+    font-size:18px;
+    margin:8px;
+}
+</style>
+</head>
+
+<body>
+<h1>Kardashev Scale Game</h1>
+<p id="levelText">Civilization Level: Type 0</p>
+<p id="energyText">Energy: 0</p>
+
+<button onclick="gainEnergy()">Generate Energy</button>
+<button onclick="upgrade()">Upgrade Civilization</button>
+
+<script>
+let energy = 0;
+let level = 0;
+const levelEnergy = [100, 500, 2000, 8000, 20000, 50000, 150000, 500000, 1000000];
+
+function gainEnergy() {
+  energy += 10;
+  updateDisplay();
+}
+
+function upgrade() {
+  if (level < levelEnergy.length-1 && energy >= levelEnergy[level]) {
+     energy -= levelEnergy[level];
+     level++;
+     updateDisplay();
+  } else {
+     alert("Not enough energy to upgrade!");
+  }
+}
+
+function updateDisplay() {
+  document.getElementById("energyText").innerText = "Energy: " + energy;
+  document.getElementById("levelText").innerText = "Civilization Level: Type " + level;
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+</body>
+</html>
