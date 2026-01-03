@@ -1,6 +1,4 @@
-<div class="stars"></div>
-<div class="stars2"></div>
-<div class="stars3"></div><!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -13,28 +11,76 @@
 <meta name="apple-mobile-web-app-title" content="Kardashev Game">
 
 <style>
+/* ===== BODY ===== */
 body {
-    background:black;
-    color:white;
-    font-family:Arial;
-    text-align:center;
-    margin-top:40px;
+  margin: 0;
+  background: black;
+  color: white;
+  font-family: Arial;
+  text-align: center;
+  overflow: hidden;
 }
+
+/* ===== STAR BACKGROUND ===== */
+.stars, .stars2, .stars3 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 200%;
+  background-repeat: repeat;
+  animation: moveStars linear infinite;
+  z-index: -1;
+}
+
+.stars {
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, white, transparent),
+    radial-gradient(1px 1px at 100px 150px, white, transparent);
+  animation-duration: 120s;
+}
+
+.stars2 {
+  background-image:
+    radial-gradient(1px 1px at 50px 80px, #aaa, transparent),
+    radial-gradient(2px 2px at 200px 300px, #ccc, transparent);
+  animation-duration: 200s;
+}
+
+.stars3 {
+  background-image:
+    radial-gradient(1px 1px at 400px 500px, #777, transparent),
+    radial-gradient(2px 2px at 600px 700px, #999, transparent);
+  animation-duration: 300s;
+}
+
+@keyframes moveStars {
+  from { transform: translateY(0); }
+  to { transform: translateY(-1000px); }
+}
+
+/* ===== BUTTON ===== */
 button {
-    padding:12px 22px;
-    font-size:18px;
-    margin:8px;
+  padding: 12px 22px;
+  font-size: 18px;
+  margin: 8px;
 }
 </style>
 </head>
 
 <body>
-<h1>Kardashev Scale Game</h1>
-<p id="levelText">Civilization Level: Type 0</p>
-<p id="energyText">Energy: 0</p>
+  <!-- 🌌 BACKGROUND LAYERS -->
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
 
-<button onclick="gainEnergy()">Generate Energy</button>
-<button onclick="upgrade()">Upgrade Civilization</button>
+  <!-- 🎮 GAME CONTENT -->
+  <h1>Kardashev Scale Game</h1>
+  <p id="levelText">Civilization Level: Type 0</p>
+  <p id="energyText">Energy: 0</p>
+
+  <button onclick="gainEnergy()">Generate Energy</button>
+  <button onclick="upgrade()">Upgrade Civilization</button>
 
 <script>
 let energy = 0;
@@ -48,11 +94,11 @@ function gainEnergy() {
 
 function upgrade() {
   if (level < levelEnergy.length-1 && energy >= levelEnergy[level]) {
-     energy -= levelEnergy[level];
-     level++;
-     updateDisplay();
+    energy -= levelEnergy[level];
+    level++;
+    updateDisplay();
   } else {
-     alert("Not enough energy to upgrade!");
+    alert("Not enough energy to upgrade!");
   }
 }
 
@@ -66,47 +112,5 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
-</body><style>
-body {
-  margin: 0;
-  background: black;
-  overflow: hidden;
-}
-
-/* Star layers */
-.stars, .stars2, .stars3 {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 200%;
-  height: 200%;
-  background-repeat: repeat;
-  background-position: 0 0;
-  animation: moveStars 100s linear infinite;
-  z-index: -1;
-}
-
-.stars {
-  background-image: radial-gradient(2px 2px at 20px 30px, white, transparent),
-                    radial-gradient(1px 1px at 100px 150px, white, transparent);
-  animation-duration: 120s;
-}
-
-.stars2 {
-  background-image: radial-gradient(1px 1px at 50px 80px, #aaa, transparent),
-                    radial-gradient(2px 2px at 200px 300px, #ccc, transparent);
-  animation-duration: 200s;
-}
-
-.stars3 {
-  background-image: radial-gradient(1px 1px at 400px 500px, #777, transparent),
-                    radial-gradient(2px 2px at 600px 700px, #999, transparent);
-  animation-duration: 300s;
-}
-
-@keyframes moveStars {
-  from { transform: translateY(0); }
-  to { transform: translateY(-1000px); }
-}
-</style>
+</body>
 </html>
