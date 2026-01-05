@@ -6,9 +6,12 @@
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Kardashev Game">
 
 <style>
-/* ===== BASIC ===== */
+/* ===== BODY ===== */
 body {
   margin: 0;
   background: black;
@@ -18,7 +21,7 @@ body {
   overflow: hidden;
 }
 
-/* ===== STARS ===== */
+/* ===== STAR BACKGROUND ===== */
 .stars, .stars2, .stars3 {
   position: fixed;
   top: 0;
@@ -27,20 +30,27 @@ body {
   height: 200%;
   background-repeat: repeat;
   animation: moveStars linear infinite;
-  z-index: -3;
-  pointer-events: none;
+  z-index: -1;
 }
 
 .stars {
-  background-image: radial-gradient(2px 2px at 20px 30px, white, transparent);
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, white, transparent),
+    radial-gradient(1px 1px at 100px 150px, white, transparent);
   animation-duration: 120s;
 }
+
 .stars2 {
-  background-image: radial-gradient(1px 1px at 100px 150px, #aaa, transparent);
+  background-image:
+    radial-gradient(1px 1px at 50px 80px, #aaa, transparent),
+    radial-gradient(2px 2px at 200px 300px, #ccc, transparent);
   animation-duration: 200s;
 }
+
 .stars3 {
-  background-image: radial-gradient(1px 1px at 300px 400px, #666, transparent);
+  background-image:
+    radial-gradient(1px 1px at 400px 500px, #777, transparent),
+    radial-gradient(2px 2px at 600px 700px, #999, transparent);
   animation-duration: 300s;
 }
 
@@ -49,62 +59,58 @@ body {
   to { transform: translateY(-1000px); }
 }
 
-/* ===== PLANET ===== */
-.planet {
-  position: fixed;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #6cf, #024);
-  top: 60%;
-  left: 10%;
-  animation: rotatePlanet 20s linear infinite;
-  z-index: -2;
-  pointer-events: none;
-}
-
-@keyframes rotatePlanet {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-/* ===== GALAXY ===== */
-.galaxy {
-  position: fixed;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  border: 2px dashed rgba(255,255,255,0.3);
-  top: 20%;
-  right: 10%;
-  animation: spinGalaxy 60s linear infinite;
-  z-index: -2;
-  pointer-events: none;
-}
-
-@keyframes spinGalaxy {
-  from { transform: rotate(360deg); }
-  to { transform: rotate(0deg); }
+/* ===== BUTTON ===== */
+button {
+  padding: 12px 22px;
+  font-size: 18px;
+  margin: 8px;
 }
 </style>
 </head>
 
 <body>
+  <!-- 🌌 BACKGROUND LAYERS -->
+  <div class="stars"></div>
+  <div class="stars2"></div>
+  <div class="stars3"></div>
 
-<!-- BACKGROUND -->
-<div class="stars"></div>
-<div class="stars2"></div>
-<div class="stars3"></div>
-<div class="planet"></div>
-<div class="galaxy"></div>
+  <!-- 🎮 GAME CONTENT -->
+  <h1>Kardashev Scale Game</h1>
+  <p id="levelText">Civilization Level: Type 0</p>
+  <p id="energyText">Energy: 0</p>
 
-<!-- GAME UI -->
-<h1>Kardashev Scale Game</h1>
-<p>Civilization Level: Type 0</p>
-<p>Energy: 0</p>
+  <button onclick="gainEnergy()">Generate Energy</button>
+  <button onclick="upgrade()">Upgrade Civilization</button>
 
-<button>Generate Energy</button>
-<button>Upgrade Civilization</button>
+<script>
+let energy = 0;
+let level = 0;
+const levelEnergy = [100, 500, 2000, 8000, 20000, 50000, 150000, 500000, 1000000];
+
+function gainEnergy() {
+  energy += 10;
+  updateDisplay();
+}
+
+function upgrade() {
+  if (level < levelEnergy.length-1 && energy >= levelEnergy[level]) {
+    energy -= levelEnergy[level];
+    level++;
+    updateDisplay();
+  } else {
+    alert("Not enough energy to upgrade!");
+  }
+}
+
+function updateDisplay() {
+  document.getElementById("energyText").innerText = "Energy: " + energy;
+  document.getElementById("levelText").innerText = "Civilization Level: Type " + level;
+}
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
 
 </body>
-</html> 
+</html>
