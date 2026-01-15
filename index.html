@@ -10,20 +10,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Kardashev Game">
-<body>
-  
-<!-- Game Canvas / Content -->
-  <button onclick="startGame()">Start Game</button>
 
-  <!-- 🔊 Sound Files -->
-  <audio id="jumpSound" src="jump.wav"></audio>
-  <audio id="coinSound" src="coin.wav"></audio>
-
-  <!-- JS File -->
-  <script src="script.js"></script>
-</body>
-</html
-  
   
 <style>
   body {
@@ -62,6 +49,23 @@ button {
   font-size: 18px;
   margin: 8px;
 }
+  </style>
+</head>
+
+<body>
+
+  <!-- Game Content -->
+  <h1>Kardashev Scale Game</h1>
+
+  <button onclick="startGame()">Start Game</button>
+
+  <!-- Sound Files -->
+  <audio id="jumpSound" src="jump.wav"></audio>
+  <audio id="coinSound" src="coin.wav"></audio>
+
+  <!-- JS -->
+  <script src="script.js"></script>
+
 
 /* ===== STARS ===== */
 .stars, .stars2, .stars3 {
