@@ -122,25 +122,31 @@ button {
 <button onclick="upgrade()">Upgrade Civilization</button>
 
 <script>
-let energy = 0;
-let level = 0;
-const level Energy=[100,500,2000,8000,20000,50000,150000,500000,1000000];
+  let energy = 0;
+  let level = 0;
 
-function gainEnergy() {
-  energy += 10;
-  document.getElementById("energyText").innerText = "Energy: " + energy;
-}
+  const levelEnergy = [100, 500, 2000, 8000, 20000, 50000, 150000, 500000, 1000000];
 
-function upgrade() {
-  if (energy >= 100) {
-    energy -= 100;
-    level++;
-    document.getElementById("levelText").innerText =
-      "Civilization Level: Type " + level;
+  function gainEnergy() {
+    energy += 10;
     document.getElementById("energyText").innerText =
       "Energy: " + energy;
   }
-}
+
+  function upgrade() {
+    if (energy >= levelEnergy[level]) {
+      energy -= levelEnergy[level];
+      level++;
+
+      document.getElementById("levelText").innerText =
+        "Civilization Level: Type " + level;
+
+      document.getElementById("energyText").innerText =
+        "Energy: " + energy;
+    } else {
+      alert("Not enough energy!");
+    }
+  }
 </script>
 
 </body>
