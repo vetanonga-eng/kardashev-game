@@ -11,26 +11,72 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Kardashev Game">
 
-  
 <style>
-  body {
+html, body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  color: white;
-  text-align: center;
-
-  body {
-  margin: 0;
+  padding: 0;
   overflow: hidden;
   background: black;
 }
+
+/* Canvas style */
 canvas {
   display: block;
-}  
+  background: #4caf50; /* land */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed;
+
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🌍 GAME WORLD -->
+<canvas id="world"></canvas>
+
+<script>
+/* ===== GAME LOGIC (JS) ===== */
+
+const canvas = document.getElementById("world");
+const ctx = canvas.getContext("2d");
+
+const tileSize = 40;
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// initial land draw
+ctx.fillStyle = "#4caf50";
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+// click to build village
+canvas.addEventListener("click", e => {
+  const x = Math.floor(e.offsetX / tileSize);
+  const y = Math.floor(e.offsetY / tileSize);
+
+  ctx.fillStyle = "#8b5a2b"; // village
+  ctx.fillRect(
+    x * tileSize + 8,
+    y * tileSize + 8,
+    24,
+    24
+  );
+});
+
+// resize support
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  ctx.fillStyle = "#4caf50";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+});
+</script>
+
+</body>
+<
 
   color: white;
   font-family: Arial;
