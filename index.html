@@ -11,24 +11,37 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Kardashev Game">
 
-<style>
+  <style>
 html, body {
   margin: 0;
   padding: 0;
   overflow: hidden;
   background: black;
 }
-
 /* Canvas style */
 canvas {
-  display: block;
-  background: #4caf50; /* land */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-
+      display: block;
+      background: #4caf50;
 }
+    
+  #ui {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      color: white;
+  }
+
+      button {
+      padding: 10px 16px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+}
+  
 </style>
 </head>
 
@@ -47,6 +60,34 @@ const tileSize = 40;
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
+
+let energy = 0;
+
+document.getElementById("energyBtn").onclick = () => {
+  energy += 10;
+  document.getElementById("energyText").innerText =
+    "Energy: " + energy;
+};
+  
+// draw world
+function drawWorld() {
+  for (let x = 0; x < canvas.width; x += tileSize) {
+    for (let y = 0; y < canvas.height; y += tileSize) {
+      const r = Math.random();
+
+      if (r < 0.6) ctx.fillStyle = "#4caf50";        // grass
+      else if (r < 0.75) ctx.fillStyle = "#2196f3"; // water
+      else if (r < 0.9) ctx.fillStyle = "#795548";  // land
+      else ctx.fillStyle = "#ff5722";               // fire
+
+      ctx.fillRect(x, y, tileSize, tileSize);
+    }
+  }
+}
+
+// draw world once
+drawWorld();
+
 
 // initial land draw
 ctx.fillStyle = "#4caf50";
@@ -73,133 +114,6 @@ window.addEventListener("resize", () => {
   ctx.fillStyle = "#4caf50";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 });
-</script>
-
-</body>
-<
-
-  color: white;
-  font-family: Arial;
-  text-align: center;
-  margin-top: 40px;
-}
-
-  overflow: hidden;
-}
-/* ===== BODY ===== */
-body {
-  margin: 0;
-  background: black;
-  color: white;
-  font-family: Arial;
-  text-align: center;
-  overflow: hidden;
-}
-
-/* ===== BUTTON ===== */
-button {
-  padding: 12px 22px;
-  font-size: 18px;
-  margin: 8px;
-}
-  </style>
-</head>
-
-<body>
-
-  <!-- Game Content -->
-  <h1>Kardashev Scale Game</h1>
-
-  <button onclick="startGame()">Start Game</button>
-
-  <!-- Sound Files -->
-  <audio id="jumpSound" src="jump.wav"></audio>
-  <audio id="coinSound" src="coin.wav"></audio>
-
-  <!-- JS -->
-  <script src="script.js"></script>
-
-
-/* ===== STARS ===== */
-.stars, .stars2, .stars3 {
-  position: fixed; uv
-  width: 200%;
-  height: 200%;
-  top: 0;
-  left: 0;
-  background-repeat: repeat;
-  z-index: -2;
-}
-
-/* ===== PLANET ===== */
-.planet {
-  position: fixed;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #6cf, #036);
-  bottom: 20%;
-  left: 10%;
-  z-index: -1;
-}
-
-/* ===== GALAXY ===== */
-.galaxy {
-  position: fixed;
-  width: 300px;
-  height: 300px;
-  border-radius: 50%;
-  border: 2px dashed rgba(255,255,255,0.3);
-  top: 20%;
-  right: 10%;
-  z-index: -1;
-}
-</style>
-</head>
-
-<body>
-
-<!-- 🌌 BACKGROUND -->
-<div class="stars"></div>
-<div class="stars2"></div>
-<div class="stars3"></div>
-<div class="planet"></div>
-<div class="galaxy"></div>
-
-<!-- 🎮 GAME UI -->
-<h1>Kardashev Scale Game</h1>
-<p id="levelText">Civilization Level: Type 0</p>
-<p id="energyText">Energy: 0</p>
-
-<button onclick="gainEnergy()">Generate Energy</button>
-<button onclick="upgrade()">Upgrade Civilization</button>
-
-<script>
-  let energy = 0;
-  let level = 0;
-
-  const levelEnergy = [100, 500, 2000, 8000, 20000, 50000, 150000, 500000, 1000000];
-
-  function gainEnergy() {
-    energy += 10;
-    document.getElementById("energyText").innerText =
-      "Energy: " + energy;
-  }
-
-  function upgrade() {
-    if (energy >= levelEnergy[level]) {
-      energy -= levelEnergy[level];
-      level++;
-
-      document.getElementById("levelText").innerText =
-        "Civilization Level: Type " + level;
-
-      document.getElementById("energyText").innerText =
-        "Energy: " + energy;
-    } else {
-      alert("Not enough energy!");
-    }
-  }
 </script>
 
 </body>
