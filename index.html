@@ -12,109 +12,276 @@
 <meta name="apple-mobile-web-app-title" content="Kardashev Game">
 
   <style>
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background: black;
-}
-/* Canvas style */
-canvas {
-      display: block;
-      background: #4caf50;
-}
-    
-  #ui {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 10;
-      color: white;
-  }
-
-      button {
-      padding: 10px 16px;
-      font-size: 16px;
-    }
-  </style>
+        body {
+            font-family: 'Courier New', monospace; /* Pixel art vibe */
+            background-color: #228B22; /* Green like the game's grass */
+            color: #000;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        #game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #F0F8FF;
+            border: 2px solid #8B4513; /* Brown border like wood */
+            padding: 20px;
+            border-radius: 10px;
+        }
+        #map {
+            display: grid;
+            grid-template-columns: repeat(10, 40px); /* Simple grid map like pixel art */
+            gap: 2px;
+            background-color: #90EE90; /* Light green for land */
+            margin: 20px auto;
+            width: 400px;
+            height: 400px;
+            border: 2px solid #000;
+        }
+        .cell {
+            background-color: #228B22; /* Default grass */
+            border: 1px solid #000;
+            cursor: pointer;
+            font-size: 20px; /* For icons */
+        }
+        .cell.house { background-color: #8B4513; } /* Brown house */
+        .cell.farm { background-color: #FFD700; } /* Yellow farm */
+        .cell.factory { background-color: #696969; } /* Gray factory */
+        .cell.power { background-color: #FFFF00; } /* Yellow power plant */
+        .cell.advanced { background-color: #FF00FF; } /* Magenta for high-tech */
+        #resources {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        button {
+            background-color: #8B4513;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button:hover { background-color: #A0522D; }
+        #scale-status {
+            font-size: 24px;
+            color: #FF4500;
+            margin: 20px 0;
+        }
+        #log {
+            background-color: #F5F5DC;
+            border: 1px solid #000;
+            height: 150px;
+            overflow-y: scroll;
+            padding: 10px;
+            text-align: left;
+            margin-top: 20px;
+        }
+    </style>
 </head>
-
 <body>
-}
-  
-</style>
-</head>
+    <div id="game-container">
+        <h1>Build a Civilization on Kardashev Scale</h1>
+        <p>Inspired by historic city builders. Start from Type 0 and reach Type 3!</p>
+        
+        <div id="scale-status">Current Kardashev Scale: Type 0 (Primitive)</div>
+        
+        <div id="resources">
+            <div>Food: <span id="food">100</span></div>
+            <div>Energy: <span id="energy">50</span></div>
+            <div>Tech: <span id="tech">0</span></div>
+            <div>Population: <span id="pop">10</span></div>
+        </div>
+        
+        <div id="map"></div>
+        
+        <div>
+            <button onclick="build('house')">Build House (Cost: 20 Food)</button>
+            <button onclick="build('farm')">Build Farm (Cost: 10 Food)</button>
+            <button onclick="build('factory')">Build Factory (Cost: 50 Energy)</button>
+            <button onclick="build('power')">Build Power Plant (Cost: 30 Tech)</button>
+            <button onclick="advanceTech()">Research Tech (Cost: 100 Energy)</button>
+        </div>
+        
+        <div id="log">Game started. Build to grow your civilization!</div>
+    </div>
 
-<body>
+    <script>
+        // Game State
+        let gameState = {
+            food: 100,
+            energy: 50,
+            tech: 0,
+            population: 10,
+            scale: 0, // 0: Type 0, 1: Type 1, 2: Type 2, 3: Type 3
+            map: Array(100).fill('grass'), // 10x10 grid
+            interval: null
+        };
 
-<!-- 🌍 GAME WORLD -->
-<canvas id="world"></canvas>
+        const scaleNames = ['Type 0 (Primitive)', 'Type 1 (Planetary)', 'Type 2 (Stellar)', 'Type 3 (Galactic)'];
 
-<script>
-/* ===== GAME LOGIC (JS) ===== */
+        // Initialize Map
+        function initMap() {
+            const mapDiv = document.getElementById('map');
+            mapDiv.innerHTML = '';
+            for (let i = 0; i < 100; i++) {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.onclick = () => placeBuilding(i);
+                mapDiv.appendChild(cell);
+            }
+            updateMap();
+        }
 
-const canvas = document.getElementById("world");
-const ctx = canvas.getContext("2d");
+        // Update Map Display
+        function updateMap() {
+            const cells = document.querySelectorAll('.cell');
+            gameState.map.forEach((type, i) => {
+                cells[i].className = `cell ${type}`;
+                cells[i].textContent = type === 'house' ? '🏠' : type === 'farm' ? '🌾' : type === 'factory' ? '🏭' : type === 'power' ? '⚡' : type === 'advanced' ? '🚀' : '';
+            });
+        }
 
-const tileSize = 40;
+        // Place Building on Map (simplified: replaces first available grass cell)
+        function placeBuilding(cellIndex) {
+            if (gameState.map[cellIndex] !== 'grass') return;
+            // For demo, we'll just log and update state; in full game, use cellIndex
+            logMessage('Building placed on map!');
+            updateDisplay();
+        }
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+        // Build Functions
+        function build(type) {
+            let cost = { food: 0, energy: 0, tech: 0 };
+            switch (type) {
+                case 'house':
+                    cost.food = 20;
+                    if (gameState.food >= cost.food) {
+                        gameState.food -= cost.food;
+                        gameState.map[gameState.map.indexOf('grass')] = 'house'; // Place on first grass
+                        gameState.population += 5;
+                        logMessage('Built House! Population increased.');
+                    } else {
+                        logMessage('Not enough Food!');
+                        return;
+                    }
+                    break;
+                case 'farm':
+                    cost.food = 10;
+                    if (gameState.food >= cost.food) {
+                        gameState.food -= cost.food;
+                        gameState.map[gameState.map.indexOf('grass')] = 'farm';
+                        gameState.food += 20; // Immediate gain
+                        logMessage('Built Farm! Food increased.');
+                    } else {
+                        logMessage('Not enough Food!');
+                        return;
+                    }
+                    break;
+                case 'factory':
+                    cost.energy = 50;
+                    if (gameState.energy >= cost.energy) {
+                        gameState.energy -= cost.energy;
+                        gameState.map[gameState.map.indexOf('grass')] = 'factory';
+                        gameState.energy += 30; // Produce energy
+                        gameState.tech += 5;
+                        logMessage('Built Factory! Energy and Tech increased.');
+                    } else {
+                        logMessage('Not enough Energy!');
+                        return;
+                    }
+                    break;
+                case 'power':
+                    cost.tech = 30;
+                    if (gameState.tech >= cost.tech) {
+                        gameState.tech -= cost.tech;
+                        gameState.map[gameState.map.indexOf('grass')] = 'power';
+                        gameState.energy += 100;
+                        logMessage('Built Power Plant! Massive Energy gain.');
+                    } else {
+                        logMessage('Not enough Tech!');
+                        return;
+                    }
+                    break;
+            }
+            updateDisplay();
+            updateMap();
+            checkScaleProgress();
+        }
 
-let energy = 0;
+        // Advance Tech
+        function advanceTech() {
+            if (gameState.energy >= 100) {
+                gameState.energy -= 100;
+                gameState.tech += 50;
+                logMessage('Tech advanced! Unlocked higher buildings.');
+                // Unlock advanced building for higher scales
+                if (gameState.scale >= 1) {
+                    gameState.map[gameState.map.indexOf('grass')] = 'advanced';
+                }
+            } else {
+                logMessage('Not enough Energy for research!');
+            }
+            updateDisplay();
+        }
 
-document.getElementById("energyBtn").onclick = () => {
-  energy += 10;
-  document.getElementById("energyText").innerText =
-    "Energy: " + energy;
-};
-  
-// draw world
-function drawWorld() {
-  for (let x = 0; x < canvas.width; x += tileSize) {
-    for (let y = 0; y < canvas.height; y += tileSize) {
-      const r = Math.random();
+        // Check Kardashev Scale Progress
+        function checkScaleProgress() {
+            if (gameState.tech >= 100 && gameState.scale < 1) {
+                gameState.scale = 1;
+                logMessage('Achieved Type 1! Planetary control unlocked.');
+            } else if (gameState.tech >= 500 && gameState.scale < 2) {
+                gameState.scale = 2;
+                logMessage('Achieved Type 2! Stellar energy harnessed.');
+            } else if (gameState.tech >= 2000 && gameState.scale < 3) {
+                gameState.scale = 3;
+                logMessage('Achieved Type 3! Galactic civilization! You win!');
+            }
+            document.getElementById('scale-status').textContent = `Current Kardashev Scale: ${scaleNames[gameState.scale]}`;
+        }
 
-      if (r < 0.6) ctx.fillStyle = "#4caf50";        // grass
-      else if (r < 0.75) ctx.fillStyle = "#2196f3"; // water
-      else if (r < 0.9) ctx.fillStyle = "#795548";  // land
-      else ctx.fillStyle = "#ff5722";               // fire
+        // Update Display
+        function updateDisplay() {
+            document.getElementById('food').textContent = gameState.food;
+            document.getElementById('energy').textContent = gameState.energy;
+            document.getElementById('tech').textContent = gameState.tech;
+            document.getElementById('pop').textContent = gameState.population;
+        }
 
-      ctx.fillRect(x, y, tileSize, tileSize);
-    }
-  }
-}
+        // Log Messages
+        function logMessage(msg) {
+            const log = document.getElementById('log');
+            log.innerHTML += `<p>${new Date().toLocaleTimeString()}: ${msg}</p>`;
+            log.scrollTop = log.scrollHeight;
+        }
 
-// draw world once
-drawWorld();
+        // Game Loop (simulates time passing)
+        function startGameLoop() {
+            gameState.interval = setInterval(() => {
+                // Auto-generate resources based on buildings
+                const houses = gameState.map.filter(t => t === 'house').length;
+                const farms = gameState.map.filter(t => t === 'farm').length;
+                gameState.food += farms * 5;
+                gameState.energy += houses * 2 + farms * 1;
+                if (gameState.scale >= 1) gameState.tech += 1; // Passive tech gain
 
+                // Population growth
+                gameState.population += Math.floor(houses * 0.1);
 
-// initial land draw
-ctx.fillStyle = "#4caf50";
-ctx.fillRect(0, 0, canvas.width, canvas.height);
+                updateDisplay();
+                checkScaleProgress();
+            }, 5000); // Every 5 seconds
+        }
 
-// click to build village
-canvas.addEventListener("click", e => {
-  const x = Math.floor(e.offsetX / tileSize);
-  const y = Math.floor(e.offsetY / tileSize);
-
-  ctx.fillStyle = "#8b5a2b"; // village
-  ctx.fillRect(
-    x * tileSize + 8,
-    y * tileSize + 8,
-    24,
-    24
-  );
-});
-
-// resize support
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  ctx.fillStyle = "#4caf50";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-});
-</script>
-
+        // Initialize Game
+        initMap();
+        updateDisplay();
+        startGameLoop();
+        logMessage('Welcome to Kardashev Builder! Start building to advance your civilization.');
+    </script>
 </body>
 </html>
